@@ -2,15 +2,25 @@ package me.johnkagga.rain;
 
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.squareup.okhttp.Call;
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.Response;
+
+import java.io.IOException;
 
 
 /**
  * A placeholder fragment containing a simple view.
  */
 public class MainActivityFragment extends Fragment {
+
+    public static final String TAG = MainActivity.class.getSimpleName();
 
     public MainActivityFragment() {
     }
@@ -25,6 +35,27 @@ public class MainActivityFragment extends Fragment {
 
         String forecastUrl = "https://api.forecast.io/forecast/"+ apiKey +"/ "
                 + latitude + "," + longitude;
+
+        /*
+        calling the client and setting up the request
+         */
+        OkHttpClient client = new OkHttpClient();
+
+        Request request = new Request.Builder()
+                .url(forecastUrl)
+                .build();
+        Call call = client.newCall(request);
+
+        try {
+            Response response = call.execute();
+            if (response.isSuccessful()){
+                //logging the whole response body
+                Log.v(TAG,response.body().string());
+            }
+        } catch (IOException e) {
+            Log.e(TAG, "Exception caught: ",e);
+        }
+
 
     }
 
